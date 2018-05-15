@@ -22,6 +22,11 @@ from boardgamegeek import api
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
 FIELDS_GAME = ('designers', 'image', 'thumbnail', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'users_rated')
 
+# Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
+# TODO: find a more "scientific" approach, this is a total guess! :-)
+BAYESIAN_ELEMENTS = 5
+BAYESIAN_AVERAGE  = 5
+
 
 def main(args):
     """
@@ -87,6 +92,16 @@ def print_designers(args, collection, games):
             entry['games'].append(game)
             # Updates average only if score is not zero (disregard not scored games)
             if score:
+                # Bayesian average: adds BAYESIAN_ELEMENTS of BAYESIAN_AVERAGE to the designer average score,
+                # to minimize the effect of computing an average for a small set of elements
+                # The intention is to have a higher average if there are *many* games of the same designer
+                # with a high score. BGG, for instance, is supposed to add 100 scores of value 5.5 to the
+                # BGG geek rating - actual formula is "secret" to avoid manipulation, according to
+                # https://www.boardgamegeek.com/wiki/page/BoardGameGeek_FAQ#toc4
+                if args.bayesian and entry['scored_games'] == 0:
+                    entry['scored_games'] += BAYESIAN_ELEMENTS
+                    entry['score_total']  += BAYESIAN_ELEMENTS * BAYESIAN_AVERAGE
+
                 # Computes current average
                 entry['scored_games'] += 1
                 entry['score_total'] += score
@@ -190,6 +205,7 @@ if __name__ == '__main__':
     group.add_argument("-o", "--owned", help="prints owned games", action="store_true")
     group.add_argument("-w", "--wishlist", help="prints wishlist", action="store_true")
     group.add_argument("-d", "--designers", help="prints designers", action="store_true")
+    parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way (experimental)", action="store_true")
     parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['bgg', 'user'], default='user')
     parser.add_argument("-p", "--players", help="filter games for # of players", type=int)
     args = parser.parse_args()

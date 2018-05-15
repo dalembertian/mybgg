@@ -91,7 +91,27 @@ average name                           games
  10.00 Matt Leacock                   Forbidden Island, Pandemic Legacy: Season 1                                                         
   9.50 Emiliano Sciarra               BANG!, BANG! The Duel                                                                               
   9.00 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor                                                
+       .
+       .
+```
 
+Same, but ordered by a Bayesian average (similar to the BGG geek rank: the more higher score games, the better):
+
+```
+$ ./bgg.py dalembertian -d -b
+
+Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
+==========
+average name                           games
+
+  6.38 Tim Fowers                     Burgle Bros., Fugitive, Hardback, Now Boarding, Paperback                                           
+  6.29 Emiliano Sciarra               BANG!, BANG! The Duel                                                                               
+  6.14 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor                                                
+  6.14 Vlaada Chvátil                 Codenames, Codenames Duet, Galaxy Trucker, Mage Knight Board Game, Through the Ages: A New Story o..
+  6.00 Alan R. Moon                   Ticket to Ride, Ticket to Ride: The Card Game                                                       
+  5.89 Andrew Looney                  Fluxx, Loonacy, Monty Python Fluxx, Pyramid Arcade, Seven Dragons                                   
+  5.86 Richard Garfield               Android: Netrunner, Magic: The Gathering                                                            
+  5.83 Antoine Bauza                  7 Wonders Duel                                                                                      
        .
        .
 ```
