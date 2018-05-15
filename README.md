@@ -16,7 +16,8 @@ pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
 
 $ ./bgg.py -h
 
-usage: bgg.py [-h] [-v] (-o | -w | -d) [-r {bgg,user}] [-p PLAYERS] username
+usage: bgg.py [-h] [-v] (-o | -w | -d) [-b] [-r {bgg,user}] [-p PLAYERS]
+              username
 
 positional arguments:
   username              username at boardgamegeek.com
@@ -27,6 +28,8 @@ optional arguments:
   -o, --owned           prints owned games
   -w, --wishlist        prints wishlist
   -d, --designers       prints designers
+  -b, --bayesian        computes average for designers in a Bayesian way
+                        (experimental)
   -r {bgg,user}, --rank {bgg,user}
                         ranking to use for games (default: user)
   -p PLAYERS, --players PLAYERS
@@ -84,13 +87,13 @@ Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
 ==========
 average name                           games
 
- 10.00 Antoine Bauza                  7 Wonders Duel                                                                                      
- 10.00 Uwe Rosenberg                  Agricola, Caverna: Cave vs Cave, Le Havre, Patchwork                                                
- 10.00 Lukas Litzsinger               Android: Netrunner                                                                                  
- 10.00 Friedemann Friese              Fast Forward: FEAR, Friday                                                                          
- 10.00 Matt Leacock                   Forbidden Island, Pandemic Legacy: Season 1                                                         
-  9.50 Emiliano Sciarra               BANG!, BANG! The Duel                                                                               
-  9.00 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor                                                
+ 10.00 Antoine Bauza                  7 Wonders Duel
+ 10.00 Uwe Rosenberg                  Agricola, Caverna: Cave vs Cave, Le Havre, Patchwork
+ 10.00 Lukas Litzsinger               Android: Netrunner
+ 10.00 Friedemann Friese              Fast Forward: FEAR, Friday
+ 10.00 Matt Leacock                   Forbidden Island, Pandemic Legacy: Season 1
+  9.50 Emiliano Sciarra               BANG!, BANG! The Duel
+  9.00 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor
        .
        .
 ```
@@ -104,14 +107,14 @@ Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
 ==========
 average name                           games
 
-  6.38 Tim Fowers                     Burgle Bros., Fugitive, Hardback, Now Boarding, Paperback                                           
-  6.29 Emiliano Sciarra               BANG!, BANG! The Duel                                                                               
-  6.14 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor                                                
+  6.38 Tim Fowers                     Burgle Bros., Fugitive, Hardback, Now Boarding, Paperback
+  6.29 Emiliano Sciarra               BANG!, BANG! The Duel
+  6.14 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor
   6.14 Vlaada Chvátil                 Codenames, Codenames Duet, Galaxy Trucker, Mage Knight Board Game, Through the Ages: A New Story o..
-  6.00 Alan R. Moon                   Ticket to Ride, Ticket to Ride: The Card Game                                                       
-  5.89 Andrew Looney                  Fluxx, Loonacy, Monty Python Fluxx, Pyramid Arcade, Seven Dragons                                   
-  5.86 Richard Garfield               Android: Netrunner, Magic: The Gathering                                                            
-  5.83 Antoine Bauza                  7 Wonders Duel                                                                                      
+  6.00 Alan R. Moon                   Ticket to Ride, Ticket to Ride: The Card Game
+  5.89 Andrew Looney                  Fluxx, Loonacy, Monty Python Fluxx, Pyramid Arcade, Seven Dragons
+  5.86 Richard Garfield               Android: Netrunner, Magic: The Gathering
+  5.83 Antoine Bauza                  7 Wonders Duel
        .
        .
 ```
