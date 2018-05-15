@@ -74,23 +74,29 @@ def print_designers(args, collection, games):
     owned = [item.id for item in collection.values() if item.owned and not games[item.id].expansion]
     designers = {}
     for id in owned:
-        # Gives weight to the designer either based on BGG rank or user rating
+        # Gives score to the designer either based on BGG rank or user rating
         score = games[id].rating_bayes_average if args.rank == 'bgg' else collection[id].rating
         try:
-            weight = float(score)
+            score = float(score)
         except:
-            weight = 1.0
+            score = 0.0
         # Adds designer to dictionary (if not already there) and increment score
         game = games[id].name
         for designer in games[id].designers:
-            entry = designers.setdefault(designer, {'games': [], 'weight': 0.0})
+            entry = designers.setdefault(designer, {'games': [], 'scored_games': 0, 'score_total': 0.0, 'average': 0.0})
             entry['games'].append(game)
-            entry['weight'] += weight
+            # Updates average only if score is not zero (disregard not scored games)
+            if score:
+                # Computes current average
+                entry['scored_games'] += 1
+                entry['score_total'] += score
+                entry['average'] = entry['score_total']/entry['scored_games']
 
-    # Order designers by weight
-    top_designers = [{'name': d[0], 'weight': d[1]['weight'], 'games': d[1]['games']} for d in sorted(
+
+    # Order designers by average
+    top_designers = [{'name': d[0], 'average': d[1]['average'], 'games': d[1]['games']} for d in sorted(
         designers.items(),
-        key=lambda e: e[1]['weight'],
+        key=lambda e: e[1]['average'],
         reverse=True
     )]
 
@@ -100,16 +106,16 @@ def print_designers(args, collection, games):
     if args.verbose:
         for designer in top_designers:
             print('%s\n---------' % designer['name'])
-            print('\tweight: %s' % designer['weight'])
+            print('\taverage: %s' % designer['average'])
             print('\tgames: %s' % ', '.join(designer['games']))
             print('')
     else:
-        print('weight name                           games\n')
+        print('average name                           games\n')
         for designer in top_designers:
             game_list = ', '.join(designer['games'])
             name = designer['name']
             print('%6.2f %-30.30s %-100.100s' % (
-                designer['weight'],
+                designer['average'],
                 (name[:28] + '..') if len(name) > 30 else name,
                 (game_list[:98] + '..') if len(game_list) > 100 else game_list,
             ))

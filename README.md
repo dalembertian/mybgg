@@ -15,6 +15,7 @@ Just install the boardgamegeek2 library and run **bgg.py** from the command line
 pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
 
 $ ./bgg.py -h
+
 usage: bgg.py [-h] [-v] (-o | -w | -d) [-r {bgg,user}] [-p PLAYERS] username
 
 positional arguments:
@@ -74,18 +75,23 @@ Wishlist: 36
                  .
 ```
 
-List of designers of the games I have, ordered by "weight" (sum of my rates):
+List of designers of the games I have, ordered by the average of my rank (disregarding non-scored games):
 
 ```
 $ ./bgg.py dalembertian -d
 
 Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
 ==========
-weight name                           games
+average name                           games
 
- 29.00 Andrew Looney                  Fluxx, Loonacy, Monty Python Fluxx, Pyramid Arcade, Seven Dragons                                   
- 28.00 Tim Fowers                     Burgle Bros., Fugitive, Hardback, Now Boarding, Paperback                                           
- 21.00 Vlaada Chvátil                 Codenames, Codenames Duet, Galaxy Trucker, Mage Knight Board Game, Through the Ages: A New Story o..
+ 10.00 Antoine Bauza                  7 Wonders Duel                                                                                      
+ 10.00 Uwe Rosenberg                  Agricola, Caverna: Cave vs Cave, Le Havre, Patchwork                                                
+ 10.00 Lukas Litzsinger               Android: Netrunner                                                                                  
+ 10.00 Friedemann Friese              Fast Forward: FEAR, Friday                                                                          
+ 10.00 Matt Leacock                   Forbidden Island, Pandemic Legacy: Season 1                                                         
+  9.50 Emiliano Sciarra               BANG!, BANG! The Duel                                                                               
+  9.00 Bruno Cathala                  7 Wonders Duel, Five Tribes, Mr. Jack Pocket, Raptor                                                
+
        .
        .
 ```
