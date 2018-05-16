@@ -116,7 +116,7 @@ def print_designers(args, collection, games):
     )]
 
     # List designers
-    # TODO: find a way to list OTHER missing games by these designers!
+    # TODO: find a way to query OTHER games by these designers from BGG (there's no API call for that)
     print('Designers: %s - %s\n==========' % (len(top_designers), 'https://www.boardgamegeek.com/browse/boardgamedesigner'))
     if args.verbose:
         for designer in top_designers:
@@ -141,7 +141,7 @@ def print_games(args, ids, collection, games):
     Prints list of games in a fixed-column format
     """
     if not args.verbose:
-        print('  BGG  rate user name                                     year min max\n')
+        print(' rank  geek user name                                     year min max\n')
 
     for id in ids:
         game = games[id]
@@ -206,7 +206,7 @@ if __name__ == '__main__':
     group.add_argument("-w", "--wishlist", help="prints wishlist", action="store_true")
     group.add_argument("-d", "--designers", help="prints designers", action="store_true")
     parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way (experimental)", action="store_true")
-    parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['bgg', 'user'], default='user')
+    parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['geek', 'user'], default='user')
     parser.add_argument("-p", "--players", help="filter games for # of players", type=int)
     args = parser.parse_args()
 
