@@ -20,7 +20,7 @@ from boardgamegeek import BGGClient
 from boardgamegeek import api
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
-FIELDS_GAME = ('designers', 'image', 'thumbnail', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'users_rated')
+FIELDS_GAME = ('designers', 'image', 'thumbnail', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
 
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
@@ -44,7 +44,7 @@ def main(args):
 
 def print_owned(args, collection, games):
     """
-    List of owned games EXCLUDING expansions, ordered by BGG ranking
+    List of owned games EXCLUDING expansions
     """
     owned = sorted(
         [item.id for item in collection.values() if item.owned and not games[item.id].expansion],
@@ -52,6 +52,8 @@ def print_owned(args, collection, games):
     )
     if args.rank == 'user':
         owned = sorted(owned, key = lambda id: collection[id].rating or 0, reverse=True)
+    elif args.rank == 'weight':
+        owned = sorted(owned, key = lambda id: games[id].rating_average_weight or 0, reverse=True)
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
     print_games(args, owned, collection, games)
 
@@ -141,7 +143,7 @@ def print_games(args, ids, collection, games):
     Prints list of games in a fixed-column format
     """
     if not args.verbose:
-        print(' rank  geek user name                                     year min max\n')
+        print(' rank  geek user name                                     year min max weight\n')
 
     for id in ids:
         game = games[id]
@@ -160,7 +162,7 @@ def print_games(args, ids, collection, games):
                 print('%s: %s' % (field, getattr(item, field)))
             print('')
         else:
-            print('%5s  %1.2f   %2.2s %-40.40s %4s  %2.2s  %2.2s' % (
+            print('%5s  %1.2f   %2.2s %-40.40s %4s  %2.2s  %2.2s   %1.2f' % (
                 game.bgg_rank or '',
                 game.rating_bayes_average,
                 (int(item.rating) if item.rating else '') if item.owned else (item.wishlist_priority or ''),
@@ -168,6 +170,7 @@ def print_games(args, ids, collection, games):
                 game.yearpublished,
                 game.minplayers,
                 game.maxplayers,
+                game.rating_average_weight,
             ))
 
 
@@ -206,7 +209,7 @@ if __name__ == '__main__':
     group.add_argument("-w", "--wishlist", help="prints wishlist", action="store_true")
     group.add_argument("-d", "--designers", help="prints designers", action="store_true")
     parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way (experimental)", action="store_true")
-    parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['geek', 'user'], default='user')
+    parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['geek', 'user', 'weight'], default='user')
     parser.add_argument("-p", "--players", help="filter games for # of players", type=int)
     args = parser.parse_args()
 
