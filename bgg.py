@@ -22,6 +22,9 @@ from boardgamegeek import api
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
 FIELDS_GAME = ('designers', 'image', 'thumbnail', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
 
+# Chunk size when calling BGG API to retrieve game list
+BGG_CHUNK_SIZE = 500
+
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
 BAYESIAN_ELEMENTS = 5
@@ -180,7 +183,14 @@ def get_games(username):
     """
     bgg = BGGClient()
     collection = {item.id: item for item in bgg.collection(username)}
-    games      = {game.id: game for game in bgg.game_list(list(collection.keys()))}
+    # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
+    game_ids   = list(collection.keys())
+    games      = {}
+
+    # Call BGG endpoint in chunks to avoid timeout
+    for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
+        chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
+        games.update({game.id: game for game in bgg.game_list(chunk)})
 
     # TODO: enrich game info with "best for" value
     # players = [(v.player_number,v.votes_for_best) for v in game.player_number_votes]
