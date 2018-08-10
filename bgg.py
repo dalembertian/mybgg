@@ -184,10 +184,10 @@ def get_games(username):
     bgg = BGGClient()
     collection = {item.id: item for item in bgg.collection(username)}
     # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
-    game_ids   = list(collection.keys())
-    games      = {}
 
     # Call BGG endpoint in chunks to avoid timeout
+    games    = {}
+    game_ids = list(collection.keys())
     for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
         chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
         games.update({game.id: game for game in bgg.game_list(chunk)})
