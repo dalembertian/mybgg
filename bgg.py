@@ -7,6 +7,7 @@ pip freeze
 -e git+git@github.com:lcosmin/boardgamegeek.git@a4106fd7cd5dd4d59acb054664aabbd266e8c4e9#egg=boardgamegeek2
 
 Created by Rubens Altimari on 2017-07-22.
+Demonstrated to Francisco Altimari on 2019-02-20.
 Copyright (c) 2017 Rubens Altimari. All rights reserved.
 """
 
