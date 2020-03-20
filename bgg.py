@@ -21,7 +21,7 @@ from boardgamegeek import BGGClient
 from boardgamegeek import api
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
-FIELDS_GAME = ('designers', 'image', 'thumbnail', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
+FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
 
 # Chunk size when calling BGG API to retrieve game list
 BGG_CHUNK_SIZE = 500
@@ -147,7 +147,7 @@ def print_games(args, ids, collection, games):
     Prints list of games in a fixed-column format
     """
     if not args.verbose:
-        print(' rank  geek user name                                     year min max weight\n')
+        print(' rank  geek user exp pre name                                     year min max weight\n')
 
     for id in ids:
         game = games[id]
@@ -166,10 +166,12 @@ def print_games(args, ids, collection, games):
                 print('%s: %s' % (field, getattr(item, field)))
             print('')
         else:
-            print('%5s  %1.2f   %2.2s %-40.40s %4s  %2.2s  %2.2s   %1.2f' % (
+            print('%5s  %1.2f   %2.2s %3.3s %3.3s %-40.40s %4s  %2.2s  %2.2s   %1.2f' % (
                 game.bgg_rank or '',
                 game.rating_bayes_average,
                 (int(item.rating) if item.rating else '') if item.owned else (item.wishlist_priority or ''),
+                ' + ' if game.expansion else '',
+                ' > ' if game.preordered else '',
                 game.name,
                 game.yearpublished,
                 game.minplayers,
@@ -192,6 +194,10 @@ def get_games(username):
     for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
         chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
         games.update({game.id: game for game in bgg.game_list(chunk)})
+
+    # Enrich game list with attributes that are only present on the collections level (for whatever reason...)
+    for game_id in game_ids:
+        setattr(games[game_id], 'preordered', getattr(collection[game_id],'preordered'))
 
     # TODO: enrich game info with "best for" value
     # players = [(v.player_number,v.votes_for_best) for v in game.player_number_votes]
