@@ -36,14 +36,16 @@ def main(args):
     """
     Generates list of games for given BGG username, plus some stats
     """
-    collection, games = get_games(args.username)
-
-    if args.owned:
-        print_owned(args, collection, games)
-    if args.wishlist:
-        print_wishlist(args, collection, games)
-    if args.designers:
-        print_designers(args, collection, games)
+    if args.stats:
+        print_stats(args)
+    else:
+        collection, games = get_games(args.username)
+        if args.owned:
+            print_owned(args, collection, games)
+        if args.wishlist:
+            print_wishlist(args, collection, games)
+        if args.designers:
+            print_designers(args, collection, games)
 
 
 def print_owned(args, collection, games):
@@ -216,6 +218,40 @@ def get_expansions(ids):
     # game_dict['expansions'] = '\n'.join(expansions)
 
 
+def print_stats(args):
+    """
+    Prints some stats about collection
+    """
+    stats = get_stats(args.username)
+    print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
+    print('{:12.12s}  {:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
+    print('{:12.12s}  {:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
+    print('{:12.12s}  {:3d}'         .format('Pre-Ordered', stats['pre_ordered']))
+    print('{:12.12s}  {:3d}'         .format('Wishlist'   , stats['wishlist']))
+
+
+def get_stats(username):
+    """
+    Returns stats about the collection (just games, not expansions) of a given BGG username
+    """
+    bgg = BGGClient()
+    collection = bgg.collection(
+        username,
+        subtype='boardgame',
+        exclude_subtype='boardgameexpansion'
+    )
+    stats = {
+        'available'   : len([game for game in collection if game.owned and not game.preordered]),
+        'played'      : len([game for game in collection if game.rating and game.owned and not game.preordered]),
+        'not_played'  : len([game for game in collection if not game.rating and game.owned and not game.preordered]),
+        'pre_ordered' : len([game for game in collection if game.preordered]),
+        'wishlist'    : len([game for game in collection if game.wishlist]),
+    }
+    stats['played_percentage'] = stats['played'] / stats['available']
+    stats['not_played_percentage'] = stats['not_played'] / stats['available']
+    return stats
+
+
 if __name__ == '__main__':
     # Accepted arguments & options
     parser = argparse.ArgumentParser()
@@ -225,6 +261,7 @@ if __name__ == '__main__':
     group.add_argument("-o", "--owned", help="prints owned games", action="store_true")
     group.add_argument("-w", "--wishlist", help="prints wishlist", action="store_true")
     group.add_argument("-d", "--designers", help="prints designers", action="store_true")
+    group.add_argument("-s", "--stats", help="prints stats", action="store_true")
     parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way", action="store_true")
     parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['geek', 'user', 'weight'], default='user')
     parser.add_argument("-p", "--players", help="filter games for # of players", type=int)
