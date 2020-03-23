@@ -84,8 +84,8 @@ Some stats about my collection (exclusing expansions):
 $ ./bgg.py dalembertian -s
 
 Available     153
-Played        105 (68.6%)
-Not Played     48 (31.4%)
+  Played      105 (68.6%)
+  Not Played   48 (31.4%)
 Pre-Ordered    12
 Wishlist       35
 

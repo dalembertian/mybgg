@@ -224,8 +224,8 @@ def print_stats(args):
     """
     stats = get_stats(args.username)
     print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
-    print('{:12.12s}  {:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
-    print('{:12.12s}  {:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
+    print('  {:12.12s}{:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
+    print('  {:12.12s}{:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
     print('{:12.12s}  {:3d}'         .format('Pre-Ordered', stats['pre_ordered']))
     print('{:12.12s}  {:3d}'         .format('Wishlist'   , stats['wishlist']))
 
