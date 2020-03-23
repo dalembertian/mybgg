@@ -27,9 +27,9 @@ optional arguments:
   -v, --verbose         increase output verbosity
   -o, --owned           prints owned games
   -w, --wishlist        prints wishlist
+  -s, --stats           prints stats
   -d, --designers       prints designers
   -b, --bayesian        computes average for designers in a Bayesian way
-                        (experimental)
   -r {bgg,user}, --rank {bgg,user}
                         ranking to use for games (default: user)
   -p PLAYERS, --players PLAYERS
@@ -76,6 +76,19 @@ Wishlist: 36
   179  7.25    3 Agricola: All Creatures Big and Small    2012   2   2
                  .
                  .
+```
+
+Some stats about my collection (exclusing expansions):
+
+```
+$ ./bgg.py dalembertian -s
+
+Available     153
+Played        105 (68.6%)
+Not Played     48 (31.4%)
+Pre-Ordered    12
+Wishlist       35
+
 ```
 
 List of designers of the games I have, ordered by the average of my rank (disregarding non-scored games):
