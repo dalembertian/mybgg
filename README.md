@@ -5,7 +5,7 @@ Simple script to query someone's collection of boardgames at boardgamegeek.com
 ### Prerequisites
 
 * Works with both Python 2 and 3
-* Installs [boardgamegeek(2)](https://github.com/lcosmin/boardgamegeek/) as a dependency
+* Installs [boardgamegeek v2](https://github.com/lcosmin/boardgamegeek/) as a dependency
 
 ### Installing
 
