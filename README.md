@@ -5,14 +5,14 @@ Simple script to query someone's collection of boardgames at boardgamegeek.com
 ### Prerequisites
 
 * [Python 3.6](https://docs.python.org/3/)
-* [boardgamegeek](https://github.com/lcosmin/boardgamegeek/) - A Python API for boardgamegeek.com
+* [boardgamegeek(2)](https://github.com/lcosmin/boardgamegeek/) - A Python API for boardgamegeek.com
 
 ### Installing
 
 Just install the boardgamegeek2 library and run **bgg.py** from the command line.
 
 ```
-pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
+pip install boardgamegeek2
 
 $ ./bgg.py -h
 
@@ -78,7 +78,7 @@ Wishlist: 36
                  .
 ```
 
-Some stats about my collection (exclusing expansions):
+Some stats about my collection (excluding expansions):
 
 ```
 $ ./bgg.py dalembertian -s
@@ -90,6 +90,7 @@ Pre-Ordered    12
 Wishlist       35
 
 ```
+*(I consider games played when I gave them a score, and unplayed otherwise. This command does not look into actual play logs)*
 
 List of designers of the games I have, ordered by the average of my rank (disregarding non-scored games):
 
