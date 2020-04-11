@@ -16,10 +16,7 @@ import argparse
 from commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 
-def main(args):
-    """
-    Dispatches commands
-    """
+def execute_command(args):
     if args.stats:
         mybgg_stats(args)
     if args.owned:
@@ -29,9 +26,7 @@ def main(args):
     if args.designers:
         mybgg_designers(args)
 
-
-if __name__ == '__main__':
-    # Accepted arguments & options
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
     parser.add_argument("username", help='username at boardgamegeek.com')
@@ -54,4 +49,7 @@ if __name__ == '__main__':
     # Remove FutureWarning warnings, contained in the current version of boardgamegeek2 library
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
-        main(args)
+        execute_command(args)
+
+if __name__ == '__main__':
+    main()
