@@ -17,6 +17,9 @@ or:
 .. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
 """
 
+# In case this is still Python 2.x
+from __future__ import print_function
+
 from boardgamegeek import BGGClient
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
@@ -31,11 +34,11 @@ BAYESIAN_ELEMENTS = 5
 BAYESIAN_AVERAGE  = 5
 
 
-def mybgg_stats(args):
+def mybgg_stats(username):
     """
     Prints some stats about collection
     """
-    stats = get_stats(args.username)
+    stats = get_stats(username)
     print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
     print('  {:12.12s}{:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
     print('  {:12.12s}{:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
