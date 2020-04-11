@@ -1,22 +1,22 @@
-# BGG
+# MYBGG
 
 Simple script to query someone's collection of boardgames at boardgamegeek.com
 
 ### Prerequisites
 
-* [Python 3.6](https://docs.python.org/3/)
-* [boardgamegeek(2)](https://github.com/lcosmin/boardgamegeek/) - A Python API for boardgamegeek.com
+* Works with both Python 2 and 3
+* Installs [boardgamegeek(2)](https://github.com/lcosmin/boardgamegeek/) as a dependency
 
 ### Installing
 
-Just install the boardgamegeek2 library and run **bgg.py** from the command line.
+Just install from Github and run **mybgg** from the command line.
 
 ```
-pip install boardgamegeek2
+pip install git+https://github.com/dalembertian/mybgg.git
 
-$ ./bgg.py -h
+$ mybgg -h
 
-usage: bgg.py [-h] [-v] (-o | -w | -d) [-b] [-r {bgg,user}] [-p PLAYERS]
+usage: mybgg [-h] [-v] (-o | -w | -d) [-b] [-r {bgg,user}] [-p PLAYERS]
               username
 
 positional arguments:
@@ -25,15 +25,15 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -v, --verbose         increase output verbosity
+  -s, --stats           prints stats
   -o, --owned           prints owned games
   -w, --wishlist        prints wishlist
-  -s, --stats           prints stats
-  -d, --designers       prints designers
-  -b, --bayesian        computes average for designers in a Bayesian way
-  -r {bgg,user}, --rank {bgg,user}
+  -r {geek,user,weight}, --rank {geek,user,weight}
                         ranking to use for games (default: user)
   -p PLAYERS, --players PLAYERS
                         filter games for # of players
+  -d, --designers       prints designers
+  -b, --bayesian        computes average for designers in a Bayesian way
 ```
 
 ## Examples
@@ -41,7 +41,7 @@ optional arguments:
 My collection, ordered by the BGG rank:
 
 ```
-$ ./bgg.py dalembertian -o -r bgg
+$ mybgg dalembertian -o -r bgg
 
 Games Owned: 118 (without expansions)
 ==========
@@ -60,7 +60,7 @@ Games Owned: 118 (without expansions)
 My wishlist, ordered by my own priorities:
 
 ```
-$ ./bgg.py dalembertian -w
+$ mybgg dalembertian -w
 
 Wishlist: 36
 ==========
@@ -81,7 +81,7 @@ Wishlist: 36
 Some stats about my collection (excluding expansions):
 
 ```
-$ ./bgg.py dalembertian -s
+$ mybgg dalembertian -s
 
 Available     153
   Played      105 (68.6%)
@@ -90,12 +90,11 @@ Pre-Ordered    12
 Wishlist       35
 
 ```
-*(I consider games played when I gave them a score, and unplayed otherwise. This command does not look into actual play logs)*
 
 List of designers of the games I have, ordered by the average of my rank (disregarding non-scored games):
 
 ```
-$ ./bgg.py dalembertian -d
+$ mybgg dalembertian -d
 
 Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
 ==========
@@ -115,7 +114,7 @@ average name                           games
 Same, but ordered by a Bayesian average (similar to the BGG geek rank: the more higher score games, the better):
 
 ```
-$ ./bgg.py dalembertian -d -b
+$ mybgg dalembertian -d -b
 
 Designers: 118 - https://www.boardgamegeek.com/browse/boardgamedesigner
 ==========
@@ -136,7 +135,7 @@ average name                           games
 So I have 5 people playing tonight, what can we play? (First the ones I played and rated, then the ones I never played)
 
 ```
- $ ./bgg.py dalembertian -o -p 5
+ $ mybgg dalembertian -o -p 5
 
  Games Owned: 118 (without expansions)
 ==========
