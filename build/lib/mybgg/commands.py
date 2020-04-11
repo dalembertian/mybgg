@@ -18,7 +18,7 @@ or:
 """
 
 # In case this is still Python 2.x
-from __future__ import print_function
+from __future__ import division
 
 from boardgamegeek import BGGClient
 
