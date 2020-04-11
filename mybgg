@@ -3,11 +3,15 @@
 """
 mybgg.py
 
-pip freeze
-boardgamegeek2==1.0.1
+pip freeze:
+    boardgamegeek2==1.0.1
+
+Install with:
+    pip install boardgamegeek2
+or:
+    pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
 
 Created by Rubens Altimari on 2017-07-22.
-Demonstrated to Francisco Altimari on 2019-02-20.
 Copyright (c) 2017 Rubens Altimari. All rights reserved.
 """
 
@@ -18,7 +22,6 @@ import warnings
 import argparse
 
 from boardgamegeek import BGGClient
-from boardgamegeek import api
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
 FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
