@@ -4,4 +4,5 @@ setup.py
 mybgg.egg-info/PKG-INFO
 mybgg.egg-info/SOURCES.txt
 mybgg.egg-info/dependency_links.txt
+mybgg.egg-info/requires.txt
 mybgg.egg-info/top_level.txt
