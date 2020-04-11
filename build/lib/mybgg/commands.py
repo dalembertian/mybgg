@@ -94,31 +94,31 @@ def get_games(username):
     return collection, games
 
 
-def mybgg_owned(args):
+def mybgg_owned(username, rank, players, verbose):
     """
     List of owned games EXCLUDING expansions
     """
-    collection, games = get_games(args.username)
+    collection, games = get_games(username)
 
     owned = sorted(
         [item.id for item in collection.values() if item.owned and not games[item.id].expansion],
         key=lambda id: games[id].bgg_rank or 999999
     )
-    if args.rank == 'user':
+    if rank == 'user':
         owned = sorted(owned, key = lambda id: collection[id].rating or 0, reverse=True)
-    elif args.rank == 'weight':
+    elif rank == 'weight':
         owned = sorted(owned, key = lambda id: games[id].rating_average_weight or 0, reverse=True)
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
-    print_games(args, owned, collection, games)
+    print_games(owned, collection, games, players, verbose)
 
 
-def mybgg_wishlist(args):
+def mybgg_wishlist(username, rank, players, verbose):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
     """
-    collection, games = get_games(args.username)
+    collection, games = get_games(username)
 
-    if args.rank == 'bgg':
+    if rank == 'bgg':
         key = lambda id: games[id].bgg_rank or 999999
     else:
         key = lambda id: collection[id].wishlist_priority
@@ -127,20 +127,20 @@ def mybgg_wishlist(args):
         key=key
     )
     print('Wishlist: %s\n==========' % len(wishlist))
-    print_games(args, wishlist, collection, games)
+    print_games(wishlist, collection, games, players, verbose)
 
 
-def mybgg_designers(args):
+def mybgg_designers(username, rank, bayesian, verbose):
     """
     Stats per designer
     """
-    collection, games = get_games(args.username)    
+    collection, games = get_games(username)    
     owned = [item.id for item in collection.values() if item.owned and not games[item.id].expansion]
 
     designers = {}
     for id in owned:
         # Gives score to the designer either based on BGG rank or user rating
-        score = games[id].rating_bayes_average if args.rank == 'bgg' else collection[id].rating
+        score = games[id].rating_bayes_average if rank == 'bgg' else collection[id].rating
         try:
             score = float(score)
         except:
@@ -158,7 +158,7 @@ def mybgg_designers(args):
                 # with a high score. BGG, for instance, is supposed to add 100 scores of value 5.5 to the
                 # BGG geek rating - actual formula is "secret" to avoid manipulation, according to
                 # https://www.boardgamegeek.com/wiki/page/BoardGameGeek_FAQ#toc4
-                if args.bayesian and entry['scored_games'] == 0:
+                if bayesian and entry['scored_games'] == 0:
                     entry['scored_games'] += BAYESIAN_ELEMENTS
                     entry['score_total']  += BAYESIAN_ELEMENTS * BAYESIAN_AVERAGE
 
@@ -178,7 +178,7 @@ def mybgg_designers(args):
     # List designers
     # TODO: find a way to query OTHER games by these designers from BGG (there's no API call for that)
     print('Designers: %s - %s\n==========' % (len(top_designers), 'https://www.boardgamegeek.com/browse/boardgamedesigner'))
-    if args.verbose:
+    if verbose:
         for designer in top_designers:
             print('%s\n---------' % designer['name'])
             print('\taverage: %s' % designer['average'])
@@ -196,11 +196,11 @@ def mybgg_designers(args):
             ))
 
 
-def print_games(args, ids, collection, games):
+def print_games(ids, collection, games, players, verbose):
     """
     Prints list of games in a fixed-column format
     """
-    if not args.verbose:
+    if not verbose:
         print(' rank  geek user exp pre name                                     year min max weight\n')
 
     for id in ids:
@@ -208,11 +208,11 @@ def print_games(args, ids, collection, games):
         item = collection[id]
         # Check if --players parameter was given, and it's within range
         # TODO: create a means to restrict to *exactly* the specified amount of players
-        if args.players:
-            if not game.minplayers <= args.players <= game.maxplayers:
+        if players:
+            if not game.minplayers <= players <= game.maxplayers:
                 continue
         # Tabular or Verbose
-        if args.verbose:
+        if verbose:
             print('%s\n---------' % game.name)
             for field in FIELDS_GAME:
                 print('%s: %s' % (field, getattr(game, field)))

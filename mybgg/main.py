@@ -20,11 +20,11 @@ def execute_command(args):
     if args.stats:
         mybgg_stats(args.username)
     if args.owned:
-        mybgg_owned(args)
+        mybgg_owned(args.username, args.rank, args.players, args.verbose)
     if args.wishlist:
-        mybgg_wishlist(args)
+        mybgg_wishlist(args.username, args.rank, args.players, args.verbose)
     if args.designers:
-        mybgg_designers(args)
+        mybgg_designers(args.username, args.rank, args.bayesian, args.verbose)
 
 def main():
     parser = argparse.ArgumentParser()
