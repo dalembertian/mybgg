@@ -6,7 +6,7 @@
 .. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
 """
 
-from .commands import mybgg_stats, mybgg_games, mybgg_owned, mybgg_wishlist, mybgg_designers
+from .commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 __all__ = ["mybgg_stats", "mybgg_games", "mybgg_owned", "mybgg_wishlist", "mybgg_designers"]
 
