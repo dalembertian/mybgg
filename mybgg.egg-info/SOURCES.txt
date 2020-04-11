@@ -1,6 +1,7 @@
 README.md
 mybgg
 setup.py
+commands/__init__.py
 mybgg.egg-info/PKG-INFO
 mybgg.egg-info/SOURCES.txt
 mybgg.egg-info/dependency_links.txt
