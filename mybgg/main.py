@@ -18,7 +18,7 @@ from commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 def execute_command(args):
     if args.stats:
-        mybgg_stats(args)
+        mybgg_stats(args.username)
     if args.owned:
         mybgg_owned(args)
     if args.wishlist:
