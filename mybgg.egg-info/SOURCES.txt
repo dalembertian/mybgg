@@ -1,9 +1,11 @@
 README.md
-mybgg
 setup.py
-commands/__init__.py
+mybgg/__init__.py
+mybgg/commands.py
+mybgg/main.py
 mybgg.egg-info/PKG-INFO
 mybgg.egg-info/SOURCES.txt
 mybgg.egg-info/dependency_links.txt
+mybgg.egg-info/entry_points.txt
 mybgg.egg-info/requires.txt
 mybgg.egg-info/top_level.txt

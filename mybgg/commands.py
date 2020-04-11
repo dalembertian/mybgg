@@ -1,12 +1,20 @@
 # encoding: utf-8
 """
-MyBGG Commands
+:mod:`mybgg.commands` - Main commands
+=========================================
 
-Uses boardgamegeek2 librar to query a BGG user's collection
+pip freeze:
+    boardgamegeek2==1.0.1
 
-Created by Rubens Altimari on 2017-07-22.
-Adapted as a Python package on 2020-04-11, during COVID-19 quarantine :-)
-Copyright (c) 2017 Rubens Altimari. All rights reserved.
+Install with:
+    pip install boardgamegeek2
+or:
+    pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
+
+.. module:: mybgg.main
+   :synopsis: Uses boardgamegeek2 library to query a BGG user's collection
+
+.. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
 """
 
 from boardgamegeek import BGGClient
@@ -21,6 +29,18 @@ BGG_CHUNK_SIZE = 500
 # TODO: find a more "scientific" approach, this is a total guess! :-)
 BAYESIAN_ELEMENTS = 5
 BAYESIAN_AVERAGE  = 5
+
+
+def mybgg_stats(args):
+    """
+    Prints some stats about collection
+    """
+    stats = get_stats(args.username)
+    print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
+    print('  {:12.12s}{:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
+    print('  {:12.12s}{:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
+    print('{:12.12s}  {:3d}'         .format('Pre-Ordered', stats['pre_ordered']))
+    print('{:12.12s}  {:3d}'         .format('Wishlist'   , stats['wishlist']))
 
 
 def get_stats(username):
@@ -44,10 +64,39 @@ def get_stats(username):
     stats['not_played_percentage'] = stats['not_played'] / stats['available']
     return stats
 
-def print_owned(args, collection, games):
+
+def get_games(username):
+    """
+    Returns list of games in the collection of the given BGG username
+    """
+    bgg = BGGClient()
+    collection = {item.id: item for item in bgg.collection(username)}
+    # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
+
+    # Call BGG endpoint in chunks to avoid timeout
+    games    = {}
+    game_ids = list(collection.keys())
+    for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
+        chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
+        games.update({game.id: game for game in bgg.game_list(chunk)})
+
+    # Enrich game list with attributes that are only present on the collections level (for whatever reason...)
+    for game_id in game_ids:
+        setattr(games[game_id], 'preordered', getattr(collection[game_id],'preordered'))
+
+    # TODO: enrich game info with "best for" value
+    # players = [(v.player_number,v.votes_for_best) for v in game.player_number_votes]
+    # best = sorted(players, key=lambda tuple: tuple[1])
+    # game_dict['best for'] = best[-1][0] if (best and best[-1][1] > 0) else ''
+    return collection, games
+
+
+def mybgg_owned(args):
     """
     List of owned games EXCLUDING expansions
     """
+    collection, games = get_games(args.username)
+
     owned = sorted(
         [item.id for item in collection.values() if item.owned and not games[item.id].expansion],
         key=lambda id: games[id].bgg_rank or 999999
@@ -60,10 +109,12 @@ def print_owned(args, collection, games):
     print_games(args, owned, collection, games)
 
 
-def print_wishlist(args, collection, games):
+def mybgg_wishlist(args):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
     """
+    collection, games = get_games(args.username)
+
     if args.rank == 'bgg':
         key = lambda id: games[id].bgg_rank or 999999
     else:
@@ -76,11 +127,13 @@ def print_wishlist(args, collection, games):
     print_games(args, wishlist, collection, games)
 
 
-def print_designers(args, collection, games):
+def mybgg_designers(args):
     """
     Stats per designer
     """
+    collection, games = get_games(args.username)    
     owned = [item.id for item in collection.values() if item.owned and not games[item.id].expansion]
+
     designers = {}
     for id in owned:
         # Gives score to the designer either based on BGG rank or user rating
@@ -178,33 +231,6 @@ def print_games(args, ids, collection, games):
             ))
 
 
-def get_games(username):
-    """
-    Returns list of games in the collection of the given BGG username
-    """
-    bgg = BGGClient()
-    collection = {item.id: item for item in bgg.collection(username)}
-    # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
-
-    # Call BGG endpoint in chunks to avoid timeout
-    games    = {}
-    game_ids = list(collection.keys())
-    for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
-        chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
-        games.update({game.id: game for game in bgg.game_list(chunk)})
-
-    # Enrich game list with attributes that are only present on the collections level (for whatever reason...)
-    for game_id in game_ids:
-        setattr(games[game_id], 'preordered', getattr(collection[game_id],'preordered'))
-
-    # TODO: enrich game info with "best for" value
-    # players = [(v.player_number,v.votes_for_best) for v in game.player_number_votes]
-    # best = sorted(players, key=lambda tuple: tuple[1])
-    # game_dict['best for'] = best[-1][0] if (best and best[-1][1] > 0) else ''
-
-    return collection, games
-
-
 def get_expansions(ids):
     """
     Returns list of expansions for given list of game IDs
@@ -212,15 +238,3 @@ def get_expansions(ids):
     # TODO: list expansions per game, not counting the ones already in the collection
     # expansions = [e.name for e in game.expansions]
     # game_dict['expansions'] = '\n'.join(expansions)
-
-
-def print_stats(args):
-    """
-    Prints some stats about collection
-    """
-    stats = get_stats(args.username)
-    print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
-    print('  {:12.12s}{:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
-    print('  {:12.12s}{:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
-    print('{:12.12s}  {:3d}'         .format('Pre-Ordered', stats['pre_ordered']))
-    print('{:12.12s}  {:3d}'         .format('Wishlist'   , stats['wishlist']))

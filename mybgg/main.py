@@ -1,19 +1,10 @@
-#!python
 # encoding: utf-8
 """
-mybgg.py
+:mod:`mybgg.main` - Command-line commands
+=========================================
 
-pip freeze:
-    boardgamegeek2==1.0.1
-
-Install with:
-    pip install boardgamegeek2
-or:
-    pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
-
-Created by Rubens Altimari on 2017-07-22.
-Adapted as a Python package on 2020-04-11, during COVID-19 quarantine :-)
-Copyright (c) 2017 Rubens Altimari. All rights reserved.
+.. module:: mybgg.main
+.. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
 """
 
 import codecs
@@ -22,22 +13,21 @@ import locale
 import warnings
 import argparse
 
-import commands
+from commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
+
 
 def main(args):
     """
     Dispatches commands
     """
     if args.stats:
-        commands.print_stats(args)
-    else:
-        collection, games = commands.get_games(args.username)
-        if args.owned:
-            commands.print_owned(args, collection, games)
-        if args.wishlist:
-            commands.print_wishlist(args, collection, games)
-        if args.designers:
-            commands.print_designers(args, collection, games)
+        mybgg_stats(args)
+    if args.owned:
+        mybgg_owned(args)
+    if args.wishlist:
+        mybgg_wishlist(args)
+    if args.designers:
+        mybgg_designers(args)
 
 
 if __name__ == '__main__':

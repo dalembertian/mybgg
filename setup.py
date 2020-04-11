@@ -1,3 +1,7 @@
+# Following tips from:
+# https://www.freecodecamp.org/news/how-to-use-github-as-a-pypi-server-1c3b0d07db2/
+# https://dzone.com/articles/executable-package-pip-install
+
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -5,8 +9,8 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='mybgg',
-    version='0.1',
-    scripts=['mybgg'] ,
+    version='0.2',
+    # scripts=['mybgg'] ,
     author="Rubens Altimari",
     author_email="rubens@altimari.nl",
     description="A command-line tool to query someone's game collection at boardgamegeek.com",
@@ -21,6 +25,11 @@ setuptools.setup(
      ],
     install_requires=[
         'boardgamegeek2',
-    ]
-    # python_requires='>=3.6',
+    ],
+    entry_points={
+        "console_scripts": [
+            "mybgg = mybgg.main:main"
+        ]
+    },
+     # python_requires='>=3.6',
  )
