@@ -13,7 +13,7 @@ import locale
 import warnings
 import argparse
 
-from commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
+from .commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 
 def execute_command(args):

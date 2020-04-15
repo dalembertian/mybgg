@@ -39,11 +39,11 @@ def mybgg_stats(username):
     Prints some stats about collection
     """
     stats = get_stats(username)
-    print('{:12.12s}  {:3d}'         .format('Available'  , stats['available']))
-    print('  {:12.12s}{:3d} ({:.1%})'.format('Played'     , stats['played'], stats['played_percentage']))
-    print('  {:12.12s}{:3d} ({:.1%})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
-    print('{:12.12s}  {:3d}'         .format('Pre-Ordered', stats['pre_ordered']))
-    print('{:12.12s}  {:3d}'         .format('Wishlist'   , stats['wishlist']))
+    print('{:12.12s}  {:3d}'           .format('Available'  , stats['available']))
+    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Played'     , stats['played'], stats['played_percentage']))
+    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
+    print('{:12.12s}  {:3d}'           .format('Pre-Ordered', stats['pre_ordered']))
+    print('{:12.12s}  {:3d}'           .format('Wishlist'   , stats['wishlist']))
 
 
 def get_stats(username):
@@ -63,8 +63,8 @@ def get_stats(username):
         'pre_ordered' : len([game for game in collection if game.preordered]),
         'wishlist'    : len([game for game in collection if game.wishlist]),
     }
-    stats['played_percentage'] = stats['played'] / stats['available']
-    stats['not_played_percentage'] = stats['not_played'] / stats['available']
+    stats['played_percentage']     = '{:.1%}'.format(stats['played'] / stats['available'])
+    stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
     return stats
 
 
