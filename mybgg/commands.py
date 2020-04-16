@@ -50,7 +50,8 @@ def get_stats(username):
     """
     Returns stats about the collection (just games, not expansions) of a given BGG username
     """
-    bgg = BGGClient(cache=CacheBackendNone())
+    # bgg = BGGClient(cache=CacheBackendNone())
+    bgg = BGGClient()
     collection = bgg.collection(
         username,
         subtype='boardgame',
@@ -72,7 +73,8 @@ def get_games(username):
     """
     Returns list of games in the collection of the given BGG username
     """
-    bgg = BGGClient(cache=CacheBackendNone())
+    # bgg = BGGClient(cache=CacheBackendNone())
+    bgg = BGGClient()
     collection = {item.id: item for item in bgg.collection(username)}
     # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
 
