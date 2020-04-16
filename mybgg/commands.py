@@ -20,7 +20,7 @@ or:
 # In case this is still Python 2.x
 from __future__ import division
 
-from boardgamegeek import BGGClient
+from boardgamegeek import BGGClient, CacheBackendNone
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
 FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
@@ -50,7 +50,7 @@ def get_stats(username):
     """
     Returns stats about the collection (just games, not expansions) of a given BGG username
     """
-    bgg = BGGClient()
+    bgg = BGGClient(cache=CacheBackendNone())
     collection = bgg.collection(
         username,
         subtype='boardgame',
@@ -72,7 +72,7 @@ def get_games(username):
     """
     Returns list of games in the collection of the given BGG username
     """
-    bgg = BGGClient()
+    bgg = BGGClient(cache=CacheBackendNone())
     collection = {item.id: item for item in bgg.collection(username)}
     # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
 
