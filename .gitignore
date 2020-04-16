@@ -1,5 +1,12 @@
 .DS_Store
 .idea/
-*.pyc
-*.swp
+build/
+dist/
 *.swo
+*.swp
+*.egg-info/
+*.egg
+*.py[cod]
+__pycache__/
+*.so
+*~
