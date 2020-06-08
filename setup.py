@@ -1,6 +1,7 @@
 # Following tips from:
 # https://www.freecodecamp.org/news/how-to-use-github-as-a-pypi-server-1c3b0d07db2/
 # https://dzone.com/articles/executable-package-pip-install
+# python setup.py bdist_wheel
 
 import setuptools
 
@@ -9,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='mybgg',
-    version='1.0',
+    version='1.1',
     # scripts=['mybgg'] ,
     author="Rubens Altimari",
     author_email="rubens@altimari.nl",
