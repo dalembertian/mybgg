@@ -55,13 +55,15 @@ def get_stats(username):
     collection = bgg.collection(
         username,
         subtype='boardgame',
-        exclude_subtype='boardgameexpansion'
+        exclude_subtype='boardgameexpansion',
     )
     stats = {
         'available'   : len([game for game in collection if game.owned and not game.preordered]),
         'played'      : len([game for game in collection if game.rating and game.owned and not game.preordered]),
         'not_played'  : len([game for game in collection if not game.rating and game.owned and not game.preordered]),
-        'pre_ordered' : len([game for game in collection if game.preordered]),
+        'pre_ordered' : len([game for game in collection if game.owned and game.preordered]),
+        'prev_owned'  : len([game for game in collection if game.prev_owned]),
+        'for_trade'   : len([game for game in collection if game.for_trade]),
         'wishlist'    : len([game for game in collection if game.wishlist]),
     }
     stats['played_percentage']     = '{:.1%}'.format(stats['played'] / stats['available'])
