@@ -44,6 +44,8 @@ def mybgg_stats(username):
     print('  {:12.12s}{:3d} ({:>6.6s})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
     print('{:12.12s}  {:3d}'           .format('Expansions' , stats['expansions']))
     print('{:12.12s}  {:3d}'           .format('Pre-Ordered', stats['pre_ordered']))
+    print('{:12.12s}  {:3d}'           .format('Prev. Owned', stats['prev_owned']))
+    print('{:12.12s}  {:3d}'           .format('For Trade'  , stats['for_trade']))
     print('{:12.12s}  {:3d}'           .format('Wishlist'   , stats['wishlist']))
 
 
@@ -68,11 +70,15 @@ def get_stats(username):
         'available'   : len([game for game in collection if game.owned and not game.preordered]),
         'played'      : len([game for game in collection if game.rating and game.owned and not game.preordered]),
         'not_played'  : len([game for game in collection if not game.rating and game.owned and not game.preordered]),
-        'pre_ordered' : len([game for game in collection if game.owned and game.preordered]),
-        'prev_owned'  : len([game for game in collection if game.prev_owned]),
-        'for_trade'   : len([game for game in collection if game.for_trade]),
-        'wishlist'    : len([game for game in collection if game.wishlist]),
-        'expansions'  : len([exp for exp in expansions if exp.owned]),
+        'expansions'  : len([exp for exp in expansions if exp.owned and not exp.preordered]),
+        'pre_ordered' : len([game for game in collection if game.owned and game.preordered]) +
+                        len([exp  for exp  in expansions if exp.owned and exp.preordered]),
+        'prev_owned'  : len([game for game in collection if game.prev_owned]) +
+                        len([exp  for exp  in expansions if exp.prev_owned]),
+        'for_trade'   : len([game for game in collection if game.for_trade]) +
+                        len([exp  for exp  in expansions if exp.for_trade]),
+        'wishlist'    : len([game for game in collection if game.wishlist]) +
+                        len([exp  for exp  in expansions if exp.wishlist]),
     }
     stats['played_percentage']     = '{:.1%}'.format(stats['played'] / stats['available'])
     stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
