@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name='mybgg',
-    version='1.1',
+    version='1.2',
     # scripts=['mybgg'] ,
     author="Rubens Altimari",
     author_email="rubens@altimari.nl",
