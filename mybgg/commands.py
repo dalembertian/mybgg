@@ -51,7 +51,7 @@ def mybgg_stats(username):
 
 def get_stats(username):
     """
-    Returns stats about the collection (just games, not expansions) of a given BGG username
+    Returns stats about the collection of a given BGG username
     """
     # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
@@ -101,18 +101,20 @@ def get_games(username):
         chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
         games.update({game.id: game for game in bgg.game_list(chunk)})
 
-    # Enrich game list with attributes that are only present on the collections level (for whatever reason...)
     for game_id in game_ids:
+        # Enrich game list with attributes that are only present on the collections level
         setattr(games[game_id], 'preordered', getattr(collection[game_id],'preordered'))
 
-    # TODO: enrich game info with "best for" value
-    # players = [(v.player_number,v.votes_for_best) for v in game.player_number_votes]
-    # best = sorted(players, key=lambda tuple: tuple[1])
-    # game_dict['best for'] = best[-1][0] if (best and best[-1][1] > 0) else ''
+        # Add "best for X players" attribute for each game
+        results = games[game_id].suggested_players['results']
+        suggestions = [(key,results[key]['best_rating']) for key in results]
+        best = sorted(suggestions, key=lambda tuple:tuple[1])
+        setattr(games[game_id], 'best_players', int(best[-1][0][0]) if best and best[-1] else 0)
+
     return collection, games
 
 
-def mybgg_owned(username, rank, players, verbose):
+def mybgg_owned(username, rank, players, exclusive, verbose):
     """
     List of owned games EXCLUDING expansions
     """
@@ -127,7 +129,7 @@ def mybgg_owned(username, rank, players, verbose):
     elif rank == 'weight':
         owned = sorted(owned, key = lambda id: games[id].rating_average_weight or 0, reverse=True)
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
-    print_games(owned, collection, games, players, verbose)
+    print_games(owned, collection, games, players, exclusive, verbose)
 
 
 def mybgg_wishlist(username, rank, players, verbose):
@@ -145,7 +147,7 @@ def mybgg_wishlist(username, rank, players, verbose):
         key=key
     )
     print('Wishlist: %s\n==========' % len(wishlist))
-    print_games(wishlist, collection, games, players, verbose)
+    print_games(wishlist, collection, games, players, exclusive, verbose)
 
 
 def mybgg_designers(username, rank, bayesian, verbose):
@@ -185,7 +187,6 @@ def mybgg_designers(username, rank, bayesian, verbose):
                 entry['score_total'] += score
                 entry['average'] = entry['score_total']/entry['scored_games']
 
-
     # Order designers by average
     top_designers = [{'name': d[0], 'average': d[1]['average'], 'games': d[1]['games']} for d in sorted(
         designers.items(),
@@ -214,12 +215,12 @@ def mybgg_designers(username, rank, bayesian, verbose):
             ))
 
 
-def print_games(ids, collection, games, players, verbose):
+def print_games(ids, collection, games, players, exclusive, verbose):
     """
     Prints list of games in a fixed-column format
     """
     if not verbose:
-        print(' rank  geek user exp pre name                                     year min max weight\n')
+        print(' rank  geek user exp pre name                                     year min max best weight\n')
 
     for id in ids:
         game = games[id]
@@ -227,8 +228,12 @@ def print_games(ids, collection, games, players, verbose):
         # Check if --players parameter was given, and it's within range
         # TODO: create a means to restrict to *exactly* the specified amount of players
         if players:
-            if not game.minplayers <= players <= game.maxplayers:
-                continue
+            if exclusive:
+                if game.best_players != players:
+                    continue
+            else:
+                if not game.minplayers <= players <= game.maxplayers:
+                    continue
         # Tabular or Verbose
         if verbose:
             print('%s\n---------' % game.name)
@@ -238,7 +243,7 @@ def print_games(ids, collection, games, players, verbose):
                 print('%s: %s' % (field, getattr(item, field)))
             print('')
         else:
-            print('%5s  %1.2f   %2.2s %3.3s %3.3s %-40.40s %4s  %2.2s  %2.2s   %1.2f' % (
+            print('%5s  %1.2f   %2.2s %3.3s %3.3s %-40.40s %4s  %2.2s  %2.2s  %3.3s   %1.2f' % (
                 game.bgg_rank or '',
                 game.rating_bayes_average,
                 (int(item.rating) if item.rating else '') if item.owned else (item.wishlist_priority or ''),
@@ -248,6 +253,7 @@ def print_games(ids, collection, games, players, verbose):
                 game.yearpublished,
                 game.minplayers,
                 game.maxplayers,
+                game.best_players,
                 game.rating_average_weight,
             ))
 

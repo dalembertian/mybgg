@@ -20,9 +20,9 @@ def execute_command(args):
     if args.stats:
         mybgg_stats(args.username)
     if args.owned:
-        mybgg_owned(args.username, args.rank, args.players, args.verbose)
+        mybgg_owned(args.username, args.rank, args.players, args.exclusive, args.verbose)
     if args.wishlist:
-        mybgg_wishlist(args.username, args.rank, args.players, args.verbose)
+        mybgg_wishlist(args.username, args.rank, args.players, args.exclusive, args.verbose)
     if args.designers:
         mybgg_designers(args.username, args.rank, args.bayesian, args.verbose)
 
@@ -36,6 +36,7 @@ def main():
     group.add_argument("-w", "--wishlist", help="prints wishlist", action="store_true")
     parser.add_argument("-r", "--rank", help="ranking to use for games (default: user)", choices=['geek', 'user', 'weight'], default='user')
     parser.add_argument("-p", "--players", help="filter games for # of players", type=int)
+    parser.add_argument("-x", "--exclusive", help="looks for exact match on # of players (best for)", action="store_true")
     group.add_argument("-d", "--designers", help="prints designers", action="store_true")
     parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way", action="store_true")
     args = parser.parse_args()
