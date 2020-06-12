@@ -258,6 +258,20 @@ def print_games(ids, collection, games, players, exclusive, verbose):
             ))
 
 
+def get_plays(username):
+    """
+    Returns list of all plays (game played on a given date) plus all play dates (total amount of plays per date)
+    """
+    # TODO: limit amount of plays retrieved
+    bgg = BGGClient()
+    plays = bgg.plays(username)
+
+    dates = {}
+    for play in plays.plays:
+        dates[play.date] = dates.get(play.date, 0) + play.quantity
+
+    return plays.plays, dates
+
 def get_expansions(ids):
     """
     Returns list of expansions for given list of game IDs
