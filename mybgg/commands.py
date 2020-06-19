@@ -39,7 +39,8 @@ def mybgg_stats(username):
     Prints some stats about collection
     """
     stats = get_stats(username)
-    print('{:12.12s}  {:3d}'           .format('Available'  , stats['available']))
+    print('{:12.12s}  {:3d}'           .format('Collection' , stats['collection']))
+    print('{:12.12s}  {:3d}'           .format('Boardgames' , stats['available']))
     print('  {:12.12s}{:3d} ({:>6.6s})'.format('Played'     , stats['played'], stats['played_percentage']))
     print('  {:12.12s}{:3d} ({:>6.6s})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
     print('{:12.12s}  {:3d}'           .format('Expansions' , stats['expansions']))
@@ -67,6 +68,7 @@ def get_stats(username):
     )
 
     stats = {
+        'collection'  : len([game for game in collection if game.owned]) + len([exp for exp in expansions if exp.owned]),
         'available'   : len([game for game in collection if game.owned and not game.preordered]),
         'played'      : len([game for game in collection if game.rating and game.owned and not game.preordered]),
         'not_played'  : len([game for game in collection if not game.rating and game.owned and not game.preordered]),
