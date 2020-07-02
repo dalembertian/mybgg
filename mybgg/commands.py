@@ -111,7 +111,7 @@ def get_games(username):
         results = games[game_id].suggested_players['results']
         suggestions = [(key,results[key]['best_rating']) for key in results]
         best = sorted(suggestions, key=lambda tuple:tuple[1])
-        setattr(games[game_id], 'best_players', int(best[-1][0][0]) if best and best[-1] else 0)
+        setattr(games[game_id], 'best_players', int(best[-1][0].strip('+')) if best and best[-1] else 0)
 
     return collection, games
 
