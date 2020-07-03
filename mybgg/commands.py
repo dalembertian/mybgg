@@ -134,7 +134,7 @@ def mybgg_owned(username, rank, players, exclusive, verbose):
     print_games(owned, collection, games, players, exclusive, verbose)
 
 
-def mybgg_wishlist(username, rank, players, verbose):
+def mybgg_wishlist(username, rank, players, exclusive, verbose):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
     """
