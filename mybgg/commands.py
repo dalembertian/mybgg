@@ -210,8 +210,8 @@ def mybgg_designers(username, rank, bayesian, verbose):
         for designer in top_designers:
             game_list = ', '.join(designer['games'])
             name = designer['name']
-            print('%6.2f %-30.30s %-100.100s' % (
-                designer['average'],
+            print('%5.5s %-30.30s %-100.100s' % (
+                '%5.2f' % designer['average'] if designer['average'] else '',
                 (name[:28] + '..') if len(name) > 30 else name,
                 (game_list[:98] + '..') if len(game_list) > 100 else game_list,
             ))
@@ -222,7 +222,7 @@ def print_games(ids, collection, games, players, exclusive, verbose):
     Prints list of games in a fixed-column format
     """
     if not verbose:
-        print(' rank  geek user exp pre name                                     year min max best weight\n')
+        print(' rank  geek  user exp pre name                                     year min max best weight\n')
 
     for id in ids:
         game = games[id]
@@ -245,10 +245,10 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 print('%s: %s' % (field, getattr(item, field)))
             print('')
         else:
-            print('%5s  %1.2f   %2.2s %3.3s %3.3s %-40.40s %4s  %2.2s  %2.2s  %3.3s   %1.2f' % (
+            print('%5s  %4.4s  %4.4s %3.3s %3.3s %-40.40s %4s  %2.2s  %2.2s  %3.3s   %1.2f' % (
                 game.bgg_rank or '',
-                game.rating_bayes_average,
-                (int(item.rating) if item.rating else '') if item.owned else (item.wishlist_priority or ''),
+                '%1.2f' % game.rating_bayes_average if game.rating_bayes_average else '',
+                ('%2.1f' % item.rating if item.rating else '') if item.owned else (item.wishlist_priority or ''),
                 ' + ' if game.expansion else '',
                 ' > ' if game.preordered else '',
                 game.name,
