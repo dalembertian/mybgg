@@ -26,6 +26,7 @@ setuptools.setup(
      ],
     install_requires=[
         'boardgamegeek2',
+        'requests-cache<=0.5.2',
     ],
     entry_points={
         "console_scripts": [
