@@ -1,12 +1,32 @@
-.DS_Store
-.idea/
-build/
-dist/
+*.db
+*.so
+*.py[cod]
+*.sqlite
+*.sqlite-journal
 *.swo
 *.swp
-*.egg-info/
 *.egg
-*.py[cod]
+*.egg-info
+build/
+dist/
+http_cache/
 __pycache__/
-*.so
-*~
+venv/
+.venv
+
+# Editors
+.DS_Store
+.~*
+.idea/
+.vim/
+.vscode/
+
+# Test / coverage reports
+.coverage
+.tox
+.mypy_cache/
+test-reports/
+
+# Sphinx
+docs/_build/
+docs/modules/
