@@ -31,7 +31,7 @@ BGG_CHUNK_SIZE = 500
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
 BAYESIAN_ELEMENTS = 5
-BAYESIAN_AVERAGE  = 5
+BAYESIAN_AVERAGE  = 7
 
 
 def mybgg_stats(username):
