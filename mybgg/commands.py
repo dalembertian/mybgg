@@ -35,65 +35,21 @@ BAYESIAN_ELEMENTS = 5
 BAYESIAN_AVERAGE  = 7
 
 
-def mybgg_stats(username):
 def get_collection(username):
     """
-    Prints some stats about collection
     Return collection (list of games) for a given user
     """
-    stats = get_stats(username)
-    print('{:12.12s}  {:3d}'           .format('Collection' , stats['collection']))
-    print('{:12.12s}  {:3d}'           .format('Boardgames' , stats['available']))
-    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Played'     , stats['played'], stats['played_percentage']))
-    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Not Played' , stats['not_played'], stats['not_played_percentage']))
-    print('{:12.12s}  {:3d}'           .format('Expansions' , stats['expansions']))
-    print('{:12.12s}  {:3d}'           .format('Pre-Ordered', stats['pre_ordered']))
-    print('{:12.12s}  {:3d}'           .format('Prev. Owned', stats['prev_owned']))
-    print('{:12.12s}  {:3d}'           .format('For Trade'  , stats['for_trade']))
-    print('{:12.12s}  {:3d}'           .format('Wishlist'   , stats['wishlist']))
-
     # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
     collection = {item.id: item for item in bgg.collection(username)}
     return collection
 
-def get_stats(username):
 def get_games(game_ids):
     """
-    Returns stats about the collection of a given BGG username
     Return game details (non-user related) for a list of game IDs
     """
-    # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
-    collection = bgg.collection(
-        username,
-        subtype='boardgame',
-        exclude_subtype='boardgameexpansion',
-    )
-    # Unfortunately expansions need a separate call, since there's no attribute in each game indicating the subtype
-    expansions = bgg.collection(
-        username,
-        subtype='boardgameexpansion',
-    )
 
-    stats = {
-        'collection'  : len([game for game in collection if game.owned]) + len([exp for exp in expansions if exp.owned]),
-        'available'   : len([game for game in collection if game.owned and not game.preordered]),
-        'played'      : len([game for game in collection if game.rating and game.owned and not game.preordered]),
-        'not_played'  : len([game for game in collection if not game.rating and game.owned and not game.preordered]),
-        'expansions'  : len([exp for exp in expansions if exp.owned and not exp.preordered]),
-        'pre_ordered' : len([game for game in collection if game.owned and game.preordered]) +
-                        len([exp  for exp  in expansions if exp.owned and exp.preordered]),
-        'prev_owned'  : len([game for game in collection if game.prev_owned]) +
-                        len([exp  for exp  in expansions if exp.prev_owned]),
-        'for_trade'   : len([game for game in collection if game.for_trade]) +
-                        len([exp  for exp  in expansions if exp.for_trade]),
-        'wishlist'    : len([game for game in collection if game.wishlist]) +
-                        len([exp  for exp  in expansions if exp.wishlist]),
-    }
-    stats['played_percentage']     = '{:.1%}'.format(stats['played'] / stats['available'])
-    stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
-    return stats
     # Call BGG endpoint in chunks to avoid timeout
     games = {}
     for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
@@ -281,6 +237,59 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 game.best_players,
                 game.rating_average_weight,
             ))
+
+
+def get_stats(username):
+    """
+    Returns stats about the collection of a given BGG username
+    """
+    # bgg = BGGClient(cache=CacheBackendNone())
+    bgg = BGGClient()
+    collection = bgg.collection(
+        username,
+        subtype='boardgame',
+        exclude_subtype='boardgameexpansion',
+    )
+    # Unfortunately expansions need a separate call, since there's no attribute in each game indicating the subtype
+    expansions = bgg.collection(
+        username,
+        subtype='boardgameexpansion',
+    )
+
+    stats = {
+        'collection':  len([game for game in collection if game.owned]) + len([exp for exp in expansions if exp.owned]),
+        'available':   len([game for game in collection if game.owned and not game.preordered]),
+        'played':      len([game for game in collection if game.rating and game.owned and not game.preordered]),
+        'not_played':  len([game for game in collection if not game.rating and game.owned and not game.preordered]),
+        'expansions':  len([exp  for exp  in expansions if exp.owned and not exp.preordered]),
+        'pre_ordered': len([game for game in collection if game.owned and game.preordered]) +
+                       len([exp  for exp  in expansions if exp.owned and exp.preordered]),
+        'prev_owned':  len([game for game in collection if game.prev_owned]) +
+                       len([exp  for exp  in expansions if exp.prev_owned]),
+        'for_trade':   len([game for game in collection if game.for_trade]) +
+                       len([exp  for exp  in expansions if exp.for_trade]),
+        'wishlist':    len([game for game in collection if game.wishlist]) +
+                       len([exp  for exp  in expansions if exp.wishlist]),
+    }
+    stats['played_percentage'] = '{:.1%}'.format(stats['played'] / stats['available'])
+    stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
+    return stats
+
+
+def mybgg_stats(username):
+    """
+    Prints some stats about collection
+    """
+    stats = get_stats(username)
+    print('{:12.12s}  {:3d}'.format('Collection', stats['collection']))
+    print('{:12.12s}  {:3d}'.format('Boardgames', stats['available']))
+    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Played', stats['played'], stats['played_percentage']))
+    print('  {:12.12s}{:3d} ({:>6.6s})'.format('Not Played', stats['not_played'], stats['not_played_percentage']))
+    print('{:12.12s}  {:3d}'.format('Expansions', stats['expansions']))
+    print('{:12.12s}  {:3d}'.format('Pre-Ordered', stats['pre_ordered']))
+    print('{:12.12s}  {:3d}'.format('Prev. Owned', stats['prev_owned']))
+    print('{:12.12s}  {:3d}'.format('For Trade', stats['for_trade']))
+    print('{:12.12s}  {:3d}'.format('Wishlist', stats['wishlist']))
 
 
 def get_plays(username):
