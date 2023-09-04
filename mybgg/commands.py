@@ -64,6 +64,7 @@ def get_games(game_ids):
         suggestions = [(key, results[key]['best_rating']) for key in results]
         best = sorted(suggestions, key=lambda tuple: tuple[1])
         setattr(games[game_id], 'best_players', int(best[-1][0].strip('+')) if best and best[-1] else 0)
+
     return games
 
 def get_collection_and_games(username):
@@ -93,7 +94,6 @@ def get_collection_and_games(username):
 
     return collection, games
 
-
 def mybgg_owned(username, rank, players, exclusive, verbose):
     """
     List of owned games EXCLUDING expansions
@@ -111,7 +111,6 @@ def mybgg_owned(username, rank, players, exclusive, verbose):
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
     print_games(owned, collection, games, players, exclusive, verbose)
 
-
 def mybgg_wishlist(username, rank, players, exclusive, verbose):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
@@ -128,7 +127,6 @@ def mybgg_wishlist(username, rank, players, exclusive, verbose):
     )
     print('Wishlist: %s\n==========' % len(wishlist))
     print_games(wishlist, collection, games, players, exclusive, verbose)
-
 
 def mybgg_designers(username, rank, bayesian, verbose):
     """
@@ -195,7 +193,6 @@ def mybgg_designers(username, rank, bayesian, verbose):
                 (game_list[:98] + '..') if len(game_list) > 100 else game_list,
             ))
 
-
 def print_games(ids, collection, games, players, exclusive, verbose):
     """
     Prints list of games in a fixed-column format
@@ -238,7 +235,6 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 game.rating_average_weight,
             ))
 
-
 def get_stats(username):
     """
     Returns stats about the collection of a given BGG username
@@ -275,7 +271,6 @@ def get_stats(username):
     stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
     return stats
 
-
 def mybgg_stats(username):
     """
     Prints some stats about collection
@@ -291,7 +286,6 @@ def mybgg_stats(username):
     print('{:12.12s}  {:3d}'.format('For Trade', stats['for_trade']))
     print('{:12.12s}  {:3d}'.format('Wishlist', stats['wishlist']))
 
-
 def get_plays(username):
     """
     Returns list of all plays (game played on a given date) plus all play dates (total amount of plays per date)
@@ -305,7 +299,6 @@ def get_plays(username):
         dates[play.date] = dates.get(play.date, 0) + play.quantity
 
     return plays.plays, dates
-
 
 def get_expansions(ids):
     """
