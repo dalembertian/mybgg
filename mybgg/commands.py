@@ -23,7 +23,8 @@ from __future__ import division
 from boardgamegeek import BGGClient, CacheBackendNone
 
 FIELDS_COLLECTION = ('id', 'name', 'rating', 'owned', 'numplays', 'preordered', 'wishlist', 'wishlist_priority')
-FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank', 'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
+FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'maxplayers', 'yearpublished', 'bgg_rank',
+               'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
 
 # Chunk size when calling BGG API to retrieve game list
 BGG_CHUNK_SIZE = 500
@@ -35,8 +36,10 @@ BAYESIAN_AVERAGE  = 7
 
 
 def mybgg_stats(username):
+def get_collection(username):
     """
     Prints some stats about collection
+    Return collection (list of games) for a given user
     """
     stats = get_stats(username)
     print('{:12.12s}  {:3d}'           .format('Collection' , stats['collection']))
@@ -49,10 +52,16 @@ def mybgg_stats(username):
     print('{:12.12s}  {:3d}'           .format('For Trade'  , stats['for_trade']))
     print('{:12.12s}  {:3d}'           .format('Wishlist'   , stats['wishlist']))
 
+    # bgg = BGGClient(cache=CacheBackendNone())
+    bgg = BGGClient()
+    collection = {item.id: item for item in bgg.collection(username)}
+    return collection
 
 def get_stats(username):
+def get_games(game_ids):
     """
     Returns stats about the collection of a given BGG username
+    Return game details (non-user related) for a list of game IDs
     """
     # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
@@ -85,32 +94,45 @@ def get_stats(username):
     stats['played_percentage']     = '{:.1%}'.format(stats['played'] / stats['available'])
     stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
     return stats
+    # Call BGG endpoint in chunks to avoid timeout
+    games = {}
+    for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
+        chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
+        games.update({game.id: game for game in bgg.game_list(chunk)})
 
+    for game_id in game_ids:
+        # Enrich game list with attributes that are only present on the collections level
+        # setattr(games[game_id], 'preordered', getattr(collection[game_id], 'preordered'))
+        # Add "best for X players" attribute for each game
+        results = games[game_id].suggested_players['results']
+        suggestions = [(key, results[key]['best_rating']) for key in results]
+        best = sorted(suggestions, key=lambda tuple: tuple[1])
+        setattr(games[game_id], 'best_players', int(best[-1][0].strip('+')) if best and best[-1] else 0)
+    return games
 
-def get_games(username):
+def get_collection_and_games(username):
     """
     Returns list of games in the collection of the given BGG username
     """
     # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
     collection = {item.id: item for item in bgg.collection(username)}
-    # games    = {game.id: game for game in bgg.game_list(list(collection.keys()))}
 
     # Call BGG endpoint in chunks to avoid timeout
-    games    = {}
+    games = {}
     game_ids = list(collection.keys())
-    for start in range(1+(len(game_ids)-1)//BGG_CHUNK_SIZE):
-        chunk = game_ids[start*BGG_CHUNK_SIZE : (start+1)*BGG_CHUNK_SIZE]
+    for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
+        chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
         games.update({game.id: game for game in bgg.game_list(chunk)})
 
     for game_id in game_ids:
         # Enrich game list with attributes that are only present on the collections level
-        setattr(games[game_id], 'preordered', getattr(collection[game_id],'preordered'))
+        setattr(games[game_id], 'preordered', getattr(collection[game_id], 'preordered'))
 
         # Add "best for X players" attribute for each game
         results = games[game_id].suggested_players['results']
-        suggestions = [(key,results[key]['best_rating']) for key in results]
-        best = sorted(suggestions, key=lambda tuple:tuple[1])
+        suggestions = [(key, results[key]['best_rating']) for key in results]
+        best = sorted(suggestions, key=lambda tuple: tuple[1])
         setattr(games[game_id], 'best_players', int(best[-1][0].strip('+')) if best and best[-1] else 0)
 
     return collection, games
@@ -120,16 +142,16 @@ def mybgg_owned(username, rank, players, exclusive, verbose):
     """
     List of owned games EXCLUDING expansions
     """
-    collection, games = get_games(username)
+    collection, games = get_collection_and_games(username)
 
     owned = sorted(
         [item.id for item in collection.values() if item.owned and not games[item.id].expansion],
         key=lambda id: games[id].bgg_rank or 999999
     )
     if rank == 'user':
-        owned = sorted(owned, key = lambda id: collection[id].rating or 0, reverse=True)
+        owned = sorted(owned, key=lambda id: collection[id].rating or 0, reverse=True)
     elif rank == 'weight':
-        owned = sorted(owned, key = lambda id: games[id].rating_average_weight or 0, reverse=True)
+        owned = sorted(owned, key=lambda id: games[id].rating_average_weight or 0, reverse=True)
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
     print_games(owned, collection, games, players, exclusive, verbose)
 
@@ -138,7 +160,7 @@ def mybgg_wishlist(username, rank, players, exclusive, verbose):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
     """
-    collection, games = get_games(username)
+    collection, games = get_collection_and_games(username)
 
     if rank == 'bgg':
         key = lambda id: games[id].bgg_rank or 999999
@@ -156,7 +178,7 @@ def mybgg_designers(username, rank, bayesian, verbose):
     """
     Stats per designer
     """
-    collection, games = get_games(username)    
+    collection, games = get_collection_and_games(username)
     owned = [item.id for item in collection.values() if item.owned and not games[item.id].expansion]
 
     designers = {}
@@ -187,7 +209,7 @@ def mybgg_designers(username, rank, bayesian, verbose):
                 # Computes current average
                 entry['scored_games'] += 1
                 entry['score_total'] += score
-                entry['average'] = entry['score_total']/entry['scored_games']
+                entry['average'] = entry['score_total'] / entry['scored_games']
 
     # Order designers by average
     top_designers = [{'name': d[0], 'average': d[1]['average'], 'games': d[1]['games']} for d in sorted(
@@ -198,7 +220,8 @@ def mybgg_designers(username, rank, bayesian, verbose):
 
     # List designers
     # TODO: find a way to query OTHER games by these designers from BGG (there's no API call for that)
-    print('Designers: %s - %s\n==========' % (len(top_designers), 'https://www.boardgamegeek.com/browse/boardgamedesigner'))
+    print('Designers: %s - %s\n==========' % (
+        len(top_designers), 'https://www.boardgamegeek.com/browse/boardgamedesigner'))
     if verbose:
         for designer in top_designers:
             print('%s\n---------' % designer['name'])
@@ -273,6 +296,7 @@ def get_plays(username):
         dates[play.date] = dates.get(play.date, 0) + play.quantity
 
     return plays.plays, dates
+
 
 def get_expansions(ids):
     """
