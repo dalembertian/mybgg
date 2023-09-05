@@ -71,27 +71,8 @@ def get_collection_and_games(username):
     """
     Returns list of games in the collection of the given BGG username
     """
-    # bgg = BGGClient(cache=CacheBackendNone())
-    bgg = BGGClient()
-    collection = {item.id: item for item in bgg.collection(username)}
-
-    # Call BGG endpoint in chunks to avoid timeout
-    games = {}
-    game_ids = list(collection.keys())
-    for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
-        chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
-        games.update({game.id: game for game in bgg.game_list(chunk)})
-
-    for game_id in game_ids:
-        # Enrich game list with attributes that are only present on the collections level
-        setattr(games[game_id], 'preordered', getattr(collection[game_id], 'preordered'))
-
-        # Add "best for X players" attribute for each game
-        results = games[game_id].suggested_players['results']
-        suggestions = [(key, results[key]['best_rating']) for key in results]
-        best = sorted(suggestions, key=lambda tuple: tuple[1])
-        setattr(games[game_id], 'best_players', int(best[-1][0].strip('+')) if best and best[-1] else 0)
-
+    collection = get_collection(username)
+    games = get_games(list(collection.keys()))
     return collection, games
 
 def mybgg_owned(username, rank, players, exclusive, verbose):
