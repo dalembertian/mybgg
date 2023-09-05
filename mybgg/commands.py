@@ -216,40 +216,51 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 game.rating_average_weight,
             ))
 
-def get_stats(username):
+def get_boardgames_and_expansions(username):
     """
-    Returns stats about the collection of a given BGG username
+    Returns separate lists for boardgames and expansions of a given BGG username
     """
-    # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
-    collection = bgg.collection(
+    boardgames = bgg.collection(
         username,
         subtype='boardgame',
         exclude_subtype='boardgameexpansion',
     )
-    # Unfortunately expansions need a separate call, since there's no attribute in each game indicating the subtype
     expansions = bgg.collection(
         username,
         subtype='boardgameexpansion',
     )
+    return boardgames, expansions
 
+def calculate_stats(boardgames, expansions):
+    """
+    Returns stats about the collection
+    """
     stats = {
-        'collection':  len([game for game in collection if game.owned]) + len([exp for exp in expansions if exp.owned]),
-        'available':   len([game for game in collection if game.owned and not game.preordered]),
-        'played':      len([game for game in collection if game.rating and game.owned and not game.preordered]),
-        'not_played':  len([game for game in collection if not game.rating and game.owned and not game.preordered]),
+        'collection':  len([game for game in boardgames if game.owned]) + len([exp for exp in expansions if exp.owned]),
+        'available':   len([game for game in boardgames if game.owned and not game.preordered]),
+        'played':      len([game for game in boardgames if game.rating and game.owned and not game.preordered]),
+        'not_played':  len([game for game in boardgames if not game.rating and game.owned and not game.preordered]),
         'expansions':  len([exp  for exp  in expansions if exp.owned and not exp.preordered]),
-        'pre_ordered': len([game for game in collection if game.owned and game.preordered]) +
+        'pre_ordered': len([game for game in boardgames if game.owned and game.preordered]) +
                        len([exp  for exp  in expansions if exp.owned and exp.preordered]),
-        'prev_owned':  len([game for game in collection if game.prev_owned]) +
+        'prev_owned':  len([game for game in boardgames if game.prev_owned]) +
                        len([exp  for exp  in expansions if exp.prev_owned]),
-        'for_trade':   len([game for game in collection if game.for_trade]) +
+        'for_trade':   len([game for game in boardgames if game.for_trade]) +
                        len([exp  for exp  in expansions if exp.for_trade]),
-        'wishlist':    len([game for game in collection if game.wishlist]) +
+        'wishlist':    len([game for game in boardgames if game.wishlist]) +
                        len([exp  for exp  in expansions if exp.wishlist]),
     }
     stats['played_percentage'] = '{:.1%}'.format(stats['played'] / stats['available'])
     stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
+    return stats
+
+def get_stats(username):
+    """
+    Returns stats about the collection of a given BGG username
+    """
+    boardgames, expansions = get_boardgames_and_expansions(username)
+    stats = calculate_stats(boardgames, expansions)
     return stats
 
 def mybgg_stats(username):
