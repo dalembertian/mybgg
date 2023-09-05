@@ -207,7 +207,7 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 '%1.2f' % game.rating_bayes_average if game.rating_bayes_average else '',
                 ('%2.1f' % item.rating if item.rating else '') if item.owned else (item.wishlist_priority or ''),
                 ' + ' if game.expansion else '',
-                ' > ' if game.preordered else '',
+                ' > ' if item.preordered else '',
                 game.name,
                 game.yearpublished,
                 game.minplayers,
