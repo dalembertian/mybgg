@@ -41,7 +41,8 @@ def get_collection(username):
     """
     # bgg = BGGClient(cache=CacheBackendNone())
     bgg = BGGClient()
-    collection = {item.id: item for item in bgg.collection(username)}
+    bgg_collection = bgg.collection(username)
+    collection = {item.id: item for item in bgg_collection}
     return collection
 
 def get_games(game_ids):
@@ -54,7 +55,8 @@ def get_games(game_ids):
     games = {}
     for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
         chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
-        games.update({game.id: game for game in bgg.game_list(chunk)})
+        bgg_game_list = bgg.game_list(chunk)
+        games.update({game.id: game for game in bgg_game_list})
 
     for game_id in game_ids:
         # Enrich game list with attributes that are only present on the collections level

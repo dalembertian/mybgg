@@ -157,7 +157,7 @@ So I have 5 people playing tonight, what can we play? (First the ones I played a
 
 ## Authors
 
-* **Rubens Altimari** - *Initial work* - [dalembertian](https://github.com/dalembertian)
+* **Rubens Altimari** - [dalembertian](https://github.com/dalembertian)
 
 ## License
 
