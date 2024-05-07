@@ -29,6 +29,11 @@ FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'ma
 # Chunk size when calling BGG API to retrieve game list
 BGG_CHUNK_SIZE = 500
 
+# XMLAPI2 parameters
+BGG_TIMEOUT = 30 # default = 15 - Total timeout (in seconds) for a request
+BGG_RETRIES = 6  # default = 3  - Amount of retries before giving up
+BGG_DELAY   = 3  # default = 5  - Interval (in seconds) between retries, each time mutlitplying by 1.5
+
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
 BAYESIAN_ELEMENTS = 5
@@ -40,7 +45,7 @@ def get_collection(username):
     Return collection (list of games) for a given user
     """
     # bgg = BGGClient(cache=CacheBackendNone())
-    bgg = BGGClient()
+    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     bgg_collection = bgg.collection(username)
     collection = {item.id: item for item in bgg_collection}
     return collection
@@ -49,7 +54,7 @@ def get_games(game_ids):
     """
     Return game details (non-user related) for a list of game IDs
     """
-    bgg = BGGClient()
+    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
 
     # Call BGG endpoint in chunks to avoid timeout
     games = {}
@@ -222,7 +227,7 @@ def get_boardgames_and_expansions(username):
     """
     Returns separate lists for boardgames and expansions of a given BGG username
     """
-    bgg = BGGClient()
+    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     boardgames = bgg.collection(
         username,
         subtype='boardgame',
@@ -285,7 +290,7 @@ def get_plays(username):
     Returns list of all plays (game played on a given date) plus all play dates (total amount of plays per date)
     """
     # TODO: limit amount of plays retrieved
-    bgg = BGGClient()
+    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     plays = bgg.plays(username)
 
     dates = {}
