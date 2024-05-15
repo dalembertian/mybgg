@@ -9,8 +9,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='mybgg',
-    version='1.8',
+    name="mybgg",
+    version="1.9",
     # scripts=['mybgg'] ,
     author="Rubens Altimari",
     author_email="rubens@altimari.nl",
@@ -23,15 +23,14 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
-     ],
+    ],
     install_requires=[
-        'boardgamegeek2',
-        'requests-cache<=0.5.2',
+        "boardgamegeek2",
+        "requests-cache<=0.5.2",
     ],
     entry_points={
         "console_scripts": [
             "mybgg = mybgg.main:main"
-        ]
+        ],
     },
-    # python_requires='>=3.6',
- )
+)

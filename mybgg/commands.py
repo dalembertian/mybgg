@@ -30,9 +30,9 @@ FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'ma
 BGG_CHUNK_SIZE = 500
 
 # XMLAPI2 parameters
-BGG_TIMEOUT = 30 # default = 15 - Total timeout (in seconds) for a request
-BGG_RETRIES = 6  # default = 3  - Amount of retries before giving up
-BGG_DELAY   = 3  # default = 5  - Interval (in seconds) between retries, each time mutlitplying by 1.5
+BGG_TIMEOUT = 10 # previous = 30; default = 15 - Total timeout (in seconds) for a request)
+BGG_RETRIES =  8 # previous =  6; default =  3 - Amount of retries before giving up
+BGG_DELAY   =  1 # previous =  3; default =  5 - Interval (in seconds) between retries, each time mutlitplying by 1.5
 
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
