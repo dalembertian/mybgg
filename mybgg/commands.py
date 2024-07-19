@@ -19,6 +19,7 @@ or:
 
 # In case this is still Python 2.x
 from __future__ import division
+import time
 
 from boardgamegeek import BGGClient, CacheBackendNone
 
@@ -27,7 +28,7 @@ FIELDS_GAME = ('designers', 'image', 'thumbnail', 'expansion', 'minplayers', 'ma
                'rating_average', 'rating_bayes_average', 'rating_average_weight', 'users_rated')
 
 # Chunk size when calling BGG API to retrieve game list
-BGG_CHUNK_SIZE = 500
+BGG_CHUNK_SIZE = 20
 
 # XMLAPI2 parameters
 BGG_TIMEOUT = 30 # previous = 30; default = 15 - Total timeout (in seconds) for a request)
@@ -61,6 +62,7 @@ def get_games(game_ids):
     for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
         chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
         bgg_game_list = bgg.game_list(chunk)
+        time.sleep(2)
         games.update({game.id: game for game in bgg_game_list})
 
     for game_id in game_ids:
