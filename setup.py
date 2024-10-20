@@ -10,7 +10,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mybgg",
-    version="1.9.2",
+    version="2.0.0",
     # scripts=['mybgg'] ,
     author="Rubens Altimari",
     author_email="rubens@altimari.nl",
@@ -25,8 +25,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "boardgamegeek2",
-        "requests-cache<=0.5.2",
+        "bgg-api",
     ],
     entry_points={
         "console_scripts": [
