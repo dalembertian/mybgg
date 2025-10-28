@@ -41,21 +41,21 @@ BAYESIAN_ELEMENTS = 5
 BAYESIAN_AVERAGE  = 7
 
 
-def get_collection(username):
+def get_collection(access_token, username):
     """
     Return collection (list of games) for a given user
     """
     # bgg = BGGClient(cache=CacheBackendNone())
-    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
+    bgg = BGGClient(access_token=access_token, timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     bgg_collection = bgg.collection(username)
     collection = {item.id: item for item in bgg_collection}
     return collection
 
-def get_games(game_ids):
+def get_games(access_token, game_ids):
     """
     Return game details (non-user related) for a list of game IDs
     """
-    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
+    bgg = BGGClient(access_token=access_token, timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
 
     # Call BGG endpoint in chunks to avoid timeout
     games = {}
@@ -76,19 +76,19 @@ def get_games(game_ids):
 
     return games
 
-def get_collection_and_games(username):
+def get_collection_and_games(access_token, username):
     """
     Returns list of games in the collection of the given BGG username
     """
-    collection = get_collection(username)
-    games = get_games(list(collection.keys()))
+    collection = get_collection(access_token, username)
+    games = get_games(access_token, list(collection.keys()))
     return collection, games
 
-def mybgg_owned(username, rank, players, exclusive, verbose):
+def mybgg_owned(access_token, username, rank, players, exclusive, verbose):
     """
     List of owned games EXCLUDING expansions
     """
-    collection, games = get_collection_and_games(username)
+    collection, games = get_collection_and_games(access_token, username)
 
     owned = sorted(
         [item.id for item in collection.values() if item.owned and not games[item.id].expansion],
@@ -101,11 +101,11 @@ def mybgg_owned(username, rank, players, exclusive, verbose):
     print('Games Owned: %s (without expansions)\n==========' % len(owned))
     print_games(owned, collection, games, players, exclusive, verbose)
 
-def mybgg_wishlist(username, rank, players, exclusive, verbose):
+def mybgg_wishlist(access_token, username, rank, players, exclusive, verbose):
     """
     Wishlist, ordered by priority (must have, nice to have, etc.)
     """
-    collection, games = get_collection_and_games(username)
+    collection, games = get_collection_and_games(access_token, username)
 
     if rank == 'bgg':
         key = lambda id: games[id].bgg_rank or 999999
@@ -118,11 +118,11 @@ def mybgg_wishlist(username, rank, players, exclusive, verbose):
     print('Wishlist: %s\n==========' % len(wishlist))
     print_games(wishlist, collection, games, players, exclusive, verbose)
 
-def mybgg_designers(username, rank, bayesian, verbose):
+def mybgg_designers(access_token, username, rank, bayesian, verbose):
     """
     Stats per designer
     """
-    collection, games = get_collection_and_games(username)
+    collection, games = get_collection_and_games(access_token, username)
     owned = [item.id for item in collection.values() if item.owned and not games[item.id].expansion]
 
     designers = {}
@@ -225,11 +225,11 @@ def print_games(ids, collection, games, players, exclusive, verbose):
                 game.rating_average_weight,
             ))
 
-def get_boardgames_and_expansions(username):
+def get_boardgames_and_expansions(access_token, username):
     """
     Returns separate lists for boardgames and expansions of a given BGG username
     """
-    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
+    bgg = BGGClient(access_token=access_token, timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     boardgames = bgg.collection(
         username,
         subtype='boardgame',
@@ -264,19 +264,19 @@ def calculate_stats(boardgames, expansions):
     stats['not_played_percentage'] = '{:.1%}'.format(stats['not_played'] / stats['available'])
     return stats
 
-def get_stats(username):
+def get_stats(access_token, username):
     """
     Returns stats about the collection of a given BGG username
     """
-    boardgames, expansions = get_boardgames_and_expansions(username)
+    boardgames, expansions = get_boardgames_and_expansions(access_token, username)
     stats = calculate_stats(boardgames, expansions)
     return stats
 
-def mybgg_stats(username):
+def mybgg_stats(access_token, username):
     """
     Prints some stats about collection
     """
-    stats = get_stats(username)
+    stats = get_stats(access_token, username)
     print('{:12.12s}  {:3d}'.format('Collection', stats['collection']))
     print('{:12.12s}  {:3d}'.format('Boardgames', stats['available']))
     print('  {:12.12s}{:3d} ({:>6.6s})'.format('Played', stats['played'], stats['played_percentage']))
@@ -287,12 +287,12 @@ def mybgg_stats(username):
     print('{:12.12s}  {:3d}'.format('For Trade', stats['for_trade']))
     print('{:12.12s}  {:3d}'.format('Wishlist', stats['wishlist']))
 
-def get_plays(username):
+def get_plays(access_token, username):
     """
     Returns list of all plays (game played on a given date) plus all play dates (total amount of plays per date)
     """
     # TODO: limit amount of plays retrieved
-    bgg = BGGClient(timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
+    bgg = BGGClient(access_token=access_token, timeout=BGG_TIMEOUT, retries=BGG_RETRIES, retry_delay=BGG_DELAY)
     plays = bgg.plays(username)
 
     dates = {}
@@ -301,7 +301,7 @@ def get_plays(username):
 
     return plays.plays, dates
 
-def get_expansions(ids):
+def get_expansions(access_token, ids):
     """
     Returns list of expansions for given list of game IDs
     """

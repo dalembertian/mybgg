@@ -5,8 +5,11 @@
 
 .. module:: mybgg.main
 .. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
+
+Use python -m mybgg.maim from parent directory if running manually
 """
 
+import os
 import codecs
 import sys
 import locale
@@ -17,14 +20,16 @@ from .commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 
 def execute_command(args):
+    access_token = os.getenv('BGG_ACCESS_TOKEN', '')
+    print(f'Using BGG Access Token: {access_token} (export BGG_ACCESS_TOKEN)')
     if args.stats:
-        mybgg_stats(args.username)
+        mybgg_stats(access_token, args.username)
     if args.owned:
-        mybgg_owned(args.username, args.rank, args.players, args.exclusive, args.verbose)
+        mybgg_owned(access_token, args.username, args.rank, args.players, args.exclusive, args.verbose)
     if args.wishlist:
-        mybgg_wishlist(args.username, args.rank, args.players, args.exclusive, args.verbose)
+        mybgg_wishlist(access_token, args.username, args.rank, args.players, args.exclusive, args.verbose)
     if args.designers:
-        mybgg_designers(args.username, args.rank, args.bayesian, args.verbose)
+        mybgg_designers(access_token, args.username, args.rank, args.bayesian, args.verbose)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -41,16 +46,7 @@ def main():
     parser.add_argument("-b", "--bayesian", help="computes average for designers in a Bayesian way", action="store_true")
     args = parser.parse_args()
 
-    # If Python 2.x
-    if sys.version_info.major < 3:
-        # Wrap sys.stdout into a StreamWriter to allow writing unicode
-        # (and get rid of UnicodeEncodeError when bash piping)
-        sys.stdout = codecs.getwriter(locale.getpreferredencoding())(sys.stdout)
-
-    # Remove FutureWarning warnings, contained in the current version of boardgamegeek2 library
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=FutureWarning)
-        execute_command(args)
+    execute_command(args)
 
 if __name__ == '__main__':
     main()
