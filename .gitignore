@@ -1,32 +1,38 @@
-*.db
-*.so
+# Python
+__pycache__/
 *.py[cod]
-*.sqlite
-*.sqlite-journal
-*.swo
-*.swp
-*.egg
-*.egg-info
+*.egg-info/
+*.eggs/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+*.tmp
+.pytest_cache/
+.mypy_cache/
+.tox/
 build/
 dist/
-http_cache/
-__pycache__/
-venv/
-.venv
 
-# Editors
+# IDEs
 .DS_Store
 .~*
-.idea/
-.vim/
 .vscode/
+.idea/
+*.swp
+*.swo
 
-# Test / coverage reports
-.coverage
-.tox
-.mypy_cache/
-test-reports/
-
-# Sphinx
-docs/_build/
-docs/modules/
+# Environment
+.env
+.venv
+venv/
+ENV/
+env/

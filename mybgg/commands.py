@@ -3,22 +3,11 @@
 :mod:`mybgg.commands` - Main commands
 =========================================
 
-pip freeze:
-    boardgamegeek2==1.0.1
-
-Install with:
-    pip install boardgamegeek2
-or:
-    pip install -e git+git@github.com:lcosmin/boardgamegeek.git#egg=boardgamegeek2
-
 .. module:: mybgg.main
-   :synopsis: Uses boardgamegeek2 library to query a BGG user's collection
-
+   :synopsis: Uses bgg-api library to query a BGG user's collection
 .. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
 """
 
-# In case this is still Python 2.x
-from __future__ import division
 import time
 
 from boardgamegeek import BGGClient, CacheBackendNone

@@ -1,0 +1,27 @@
+# PEP 621-compliant
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mybgg"
+version = "2.1.1"
+description = "A command-line tool to query someone's game collection at boardgamegeek.com"
+readme = "README.md"
+license = { file = "LICENSE.md" }
+authors = [
+  { name = "Rubens Altimari", email = "rubens@altimari.nl" },
+]
+dependencies = ["bgg-api"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/dalembertian/mybgg"
+
+[project.scripts]
+mybgg = "mybgg.main:main"

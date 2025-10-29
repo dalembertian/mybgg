@@ -5,8 +5,6 @@
 
 .. module:: mybgg.main
 .. moduleauthor:: Rubens Altimari <rubens@altimari.nl>
-
-Use python -m mybgg.maim from parent directory if running manually
 """
 
 import os
@@ -21,7 +19,7 @@ from .commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
 
 def execute_command(args):
     access_token = os.getenv('BGG_ACCESS_TOKEN', '')
-    print(f'Using BGG Access Token: {access_token} (export BGG_ACCESS_TOKEN)')
+    print(f'Using BGG Access Token: {access_token} (export BGG_ACCESS_TOKEN)\n')
     if args.stats:
         mybgg_stats(access_token, args.username)
     if args.owned:

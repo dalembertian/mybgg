@@ -5,15 +5,16 @@ Simple script to query someone's collection of boardgames at boardgamegeek.com
 ### Requirements
 
 * Python 3
-* setuptools
-* [bgg-api](https://github.com/SukiCZ/boardgamegeek) (replacement of [boardgamegeek v2](https://github.com/lcosmin/boardgamegeek/))
+* [bgg-api](https://pypi.org/project/bgg-api/) (replacement of [boardgamegeek v2](https://github.com/lcosmin/boardgamegeek/))
 
 ### Installing
 
-Just install from Github and run **mybgg** from the command line.
+Just install from Github and run **mybgg** from the command line. You need to set the environment variable BGG_ACCESS_TOKEN with your [access token](https://boardgamegeek.com/applications).
 
 ```
 pip install git+https://github.com/dalembertian/mybgg.git
+
+$ export BGG_ACCESS_TOKEN=<your access token>
 
 $ mybgg -h
 
