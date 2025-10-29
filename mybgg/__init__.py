@@ -27,7 +27,3 @@ Publish to PyPI:
     pip install twine
     twine upload dist/*
 """
-
-from .commands import mybgg_stats, mybgg_owned, mybgg_wishlist, mybgg_designers
-
-# __all__ = ["mybgg_stats", "mybgg_games", "mybgg_owned", "mybgg_wishlist", "mybgg_designers"]
