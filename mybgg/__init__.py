@@ -18,9 +18,15 @@ Running manually (from parent directory):
     python -m mybgg.main
 
 Installing:
+    pip install .
+    pip install [-e] .
+
+Building (and installing) for distribution:
     pip install build
     python -m build
     pip install dist/*.whl
+
+Testing:
     mybgg --help
 
 Publish to PyPI:
