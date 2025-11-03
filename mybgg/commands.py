@@ -51,7 +51,7 @@ def get_games(access_token, game_ids):
     for start in range(1 + (len(game_ids) - 1) // BGG_CHUNK_SIZE):
         chunk = game_ids[start * BGG_CHUNK_SIZE: (start + 1) * BGG_CHUNK_SIZE]
         bgg_game_list = bgg.game_list(chunk)
-        time.sleep(2)
+        time.sleep(BGG_DELAY)
         games.update({game.id: game for game in bgg_game_list})
 
     for game_id in game_ids:
