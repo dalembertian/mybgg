@@ -27,7 +27,7 @@ BGG_DELAY   =  2 # previous =  3; default =  5 - Interval (in seconds) between r
 # Totally arbitrary values for computing the Bayesian average score of a designer (see more remarks in the corresponding code section)
 # TODO: find a more "scientific" approach, this is a total guess! :-)
 BAYESIAN_ELEMENTS = 5
-BAYESIAN_AVERAGE  = 7
+BAYESIAN_AVERAGE  = 5
 
 
 def get_collection(access_token, username):
@@ -126,9 +126,9 @@ def mybgg_designers(access_token, username, rank, bayesian, verbose):
         game = games[id].name
         for designer in games[id].designers:
             entry = designers.setdefault(designer, {'games': [], 'scored_games': 0, 'score_total': 0.0, 'average': 0.0})
-            entry['games'].append(game)
             # Updates average only if score is not zero (disregard not scored games)
             if score:
+                entry['games'].append(game)
                 # Bayesian average: adds BAYESIAN_ELEMENTS of BAYESIAN_AVERAGE to the designer average score,
                 # to minimize the effect of computing an average for a small set of elements
                 # The intention is to have a higher average if there are *many* games of the same designer
